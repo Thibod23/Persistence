@@ -1,95 +1,103 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System;
 
 public class GameController : MonoBehaviour {
     public static GameController control;
 
-    
-    public int attack;
-    public int defense;
-    public int health;
+    public int Attack;
+    public int Defense;
+    public int Health;
+    public int Index;
 
 
     private void Awake() {
         if (control == null) {
             DontDestroyOnLoad(gameObject);
             control = this;
-            try {
+            try
+            {
                 LoadGame();
-
-            } catch {
-                print("Unable to load game. Game file might not exist.");
+            }
+            catch
+            {
                 SetDefaultValue();
             }
-            
-        } else if (control != this) {
+        }
+        else if (control != this) {
             Destroy(gameObject);
         }
     }
 
-    private void SetDefaultValue() {
-        attack = 5;
-        defense = 2;
-        health = 10;
+    public void SetDefaultValue()
+    {
+        Attack = 5;
+        Defense = 2;
+        Health = 10;
     }
     private void OnGUI() {
         GUIStyle style = new GUIStyle();
         style.fontSize = 56;
-        print(attack.ToString());
-        GUI.Label(new Rect(10, 160, 100, 30), "Attack : " + attack.ToString(), style);
-        GUI.Label(new Rect(10, 110, 100, 30), "Defense : " + defense.ToString(), style);
-        GUI.Label(new Rect(10, 60, 100, 30), "Health : " + health.ToString(), style);
+        print(Attack.ToString());
+        GUI.Label(new Rect(10, 160, 100, 30), "Attack : " + Attack.ToString(), style);
+        GUI.Label(new Rect(10, 110, 100, 30), "Defense : " + Defense.ToString(), style);
+        GUI.Label(new Rect(10, 60, 100, 30), "Health : " + Health.ToString(), style);
        
     }
 
     public void IncreaseAttack() {
-        attack += 1;
+        Attack += 1;
     }
 
     public void IncreaseDefense() {
-        defense += 1;
+        Defense += 1;
     }
 
     public void IncreaseHealth() {
-        health += 10;
+        Health += 10;
     }
 
-    public void SaveGame() {
-        BinaryFormatter bf = new BinaryFormatter();
-     
+    public void SaveGame()
+    {
         FileStream file = File.Open(Application.persistentDataPath + "/gameInfo.dat", FileMode.Create);
-        PlayerData playerData = new PlayerData();
-        playerData.attack = attack;
-        playerData.defense = defense;
-        playerData.health = health;
-
-        bf.Serialize(file, playerData);
+        PlayerData data = new PlayerData();
+        data.health = Health;
+        data.attack = Attack;
+        data.defense = Defense;
+        BinaryFormatter bf = new BinaryFormatter();
+        bf.Serialize(file, data);
         file.Close();
     }
 
-    public void LoadGame() {
+    public void LoadGame()
+    {
         BinaryFormatter bf = new BinaryFormatter();
-        if(!File.Exists(Application.persistentDataPath + "/gameInfo.dat")){
-            throw new Exception("Game file not existing");
+        if(!File.Exists(Application.persistentDataPath + "/gameInfo.dat"))
+        {
+            throw new Exception("Game file does not exist");
         }
         FileStream file = File.Open(Application.persistentDataPath + "/gameInfo.dat", FileMode.Open);
-        PlayerData playerData = (PlayerData) bf.Deserialize(file);
+        PlayerData data = (PlayerData)bf.Deserialize(file);
+        Attack = data.attack;
+        Defense = data.defense;
+        Health = data.health;
         file.Close();
-        attack = playerData.attack;
-        defense = playerData.defense;
-        health = playerData.health;
-        
     }
-    
+
+
+
+
+
 
 }
+
 [Serializable]
-class PlayerData {
+class PlayerData
+{
+    public int health;
     public int attack;
     public int defense;
-    public int health;
 }

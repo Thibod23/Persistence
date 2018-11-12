@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class SaveLoadButton : MonoBehaviour {
 
-	public void Save() {
+    public void Save()
+    {
         GameController.control.SaveGame();
+        SceneController.sceneControl.SaveScene();
     }
 
-    public void Load() {
+    public void Load()
+    {
         GameController.control.LoadGame();
+        SceneController.sceneControl.LoadScene();
     }
-
 }
